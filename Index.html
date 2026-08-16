@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0b0b0b">
+
+<title>Amir Talles — Music</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    background:#0b0b0b;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    overflow-x:hidden;
+}
+
+button,input{
+    font:inherit;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+}
+
+.app{
+    min-height:100vh;
+    padding-bottom:150px;
+}
+
+/* HEADER */
+
+.header{
+    height:92px;
+    padding:24px 18px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.brand-avatar{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#222;
+}
+
+.brand-name{
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:-.8px;
+}
+
+.add-button{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:transparent;
+    color:#fff;
+    font-size:37px;
+}
+
+/* FILTERS */
+
+.filters{
+    display:flex;
+    gap:10px;
+    padding:6px 18px 20px;
+    overflow-x:auto;
+    scrollbar-width:none;
+}
+
+.filters::-webkit-scrollbar{
+    display:none;
+}
+
+.filter{
+    flex:0 0 auto;
+    padding:10px 18px;
+    border-radius:24px;
+    background:#292929;
+    color:#fff;
+    font-size:15px;
+}
+
+.filter.active{
+    background:#fff;
+    color:#000;
+}
+
+/* CONTENT */
+
+.content{
+    padding:0 18px;
+}
+
+.section-title{
+    margin:8px 2px 17px;
+    font-size:23px;
+    font-weight:800;
+}
+
+/* ARTIST */
+
+.artist-card{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:10px 5px 22px;
+    cursor:pointer;
+}
+
+.artist-card:active{
+    transform:scale(.98);
+}
+
+.artist-photo{
+    width:88px;
+    height:88px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#202020;
+}
+
+.artist-name{
+    font-size:22px;
+    font-weight:500;
+}
+
+.artist-role{
+    margin-top:7px;
+    color:#a8a8a8;
+    font-size:15px;
+}
+
+/* ARTIST PAGE */
+
+.artist-page{
+    display:none;
+}
+
+.hero{
+    position:relative;
+    height:410px;
+    overflow:hidden;
+    display:flex;
+    align-items:flex-end;
+}
+
+.hero-image{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.hero-gradient{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        to bottom,
+        rgba(0,0,0,.15),
+        rgba(0,0,0,.2) 35%,
+        rgba(11,11,11,.92) 88%,
+        #0b0b0b
+    );
+}
+
+.back-button{
+    position:absolute;
+    top:20px;
+    left:18px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:rgba(0,0,0,.45);
+    color:#fff;
+    font-size:31px;
+    z-index:5;
+}
+
+.hero-info{
+    position:relative;
+    z-index:2;
+    padding:25px 24px 28px;
+}
+
+.hero-name{
+    font-size:48px;
+    line-height:1;
+    font-weight:900;
+    letter-spacing:-1.8px;
+}
+
+.verified{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:14px;
+    font-size:15px;
+    font-weight:700;
+}
+
+.verified-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:#1ed760;
+    color:#000;
+}
+
+/* CONTROLS */
+
+.artist-controls{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px 22px;
+}
+
+.follow{
+    padding:10px 20px;
+    border:1px solid #777;
+    border-radius:24px;
+    background:transparent;
+    color:#fff;
+    font-weight:700;
+}
+
+.play-button{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:#1ed760;
+    color:#000;
+    font-size:25px;
+}
+
+/* TRACKS */
+
+.tracks{
+    padding:0 18px;
+}
+
+.track{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:9px 0;
+    min-height:80px;
+}
+
+.track-number{
+    width:22px;
+    text-align:center;
+    color:#a5a5a5;
+    flex-shrink:0;
+}
+
+.track-cover{
+    width:62px;
+    height:62px;
+    border-radius:7px;
+    object-fit:cover;
+    background:#222;
+    flex-shrink:0;
+}
+
+.track-info{
+    flex:1;
+    min-width:0;
+    cursor:pointer;
+}
+
+.track-title{
+    font-size:17px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.track-artist{
+    color:#999;
+    font-size:14px;
+    margin-top:5px;
+}
+
+.track-link{
+    color:#aaa;
+    text-decoration:none;
+    font-size:28px;
+    padding:8px;
+}
+
+/* PLAYER */
+
+.player{
+    display:none;
+    position:fixed;
+    z-index:50;
+    left:12px;
+    right:12px;
+    bottom:76px;
+    height:72px;
+    padding:8px 10px;
+    border-radius:14px;
+    background:#342c2e;
+    box-shadow:0 5px 25px rgba(0,0,0,.45);
+    align-items:center;
+}
+
+.player-cover{
+    width:55px;
+    height:55px;
+    border-radius:6px;
+    object-fit:cover;
+}
+
+.player-info{
+    flex:1;
+    min-width:0;
+    margin-left:12px;
+}
+
+.player-title{
+    font-weight:700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.player-subtitle{
+    margin-top:4px;
+    color:#aaa;
+    font-size:13px;
+}
+
+.player-open{
+    width:44px;
+    height:44px;
+    background:transparent;
+    color:#fff;
+    font-size:25px;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav{
+    position:fixed;
+    z-index:60;
+    left:0;
+    right:0;
+    bottom:0;
+    height:76px;
+    background:#0b0b0b;
+    border-top:1px solid #222;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+}
+
+.nav-item{
+    background:transparent;
+    color:#999;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    font-size:11px;
+}
+
+.nav-item.active{
+    color:#fff;
+}
+
+.nav-icon{
+    font-size:25px;
+    line-height:25px;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:rgba(0,0,0,.72);
+    align-items:flex-end;
+}
+
+.modal-box{
+    width:100%;
+    max-height:90vh;
+    overflow-y:auto;
+    background:#1a1a1a;
+    border-radius:24px 24px 0 0;
+    padding:24px 20px 35px;
+}
+
+.modal-title{
+    font-size:25px;
+    font-weight:800;
+    margin-bottom:22px;
+}
+
+.form-group{
+    margin-bottom:17px;
+}
+
+.form-label{
+    display:block;
+    color:#aaa;
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.input{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #444;
+    outline:0;
+    background:#292929;
+    color:#fff;
+    font-size:16px;
+}
+
+.input:focus{
+    border-color:#1ed760;
+}
+
+.upload{
+    padding:22px;
+    border:2px dashed #555;
+    border-radius:15px;
+    text-align:center;
+    color:#aaa;
+}
+
+.preview{
+    display:none;
+    width:120px;
+    height:120px;
+    margin:12px auto 0;
+    border-radius:12px;
+    object-fit:cover;
+}
+
+.modal-buttons{
+    display:flex;
+    gap:10px;
+    margin-top:24px;
+}
+
+.cancel,
+.save{
+    flex:1;
+    padding:14px;
+    border-radius:13px;
+    font-weight:700;
+    font-size:16px;
+}
+
+.cancel{
+    background:#333;
+    color:#fff;
+}
+
+.save{
+    background:#1ed760;
+    color:#000;
+}
+
+.empty{
+    padding:60px 15px;
+    text-align:center;
+    color:#777;
+}
+
+@media (min-width:700px){
+
+    body{
+        max-width:520px;
+        margin:auto;
+        background:#050505;
+    }
+
+    .bottom-nav{
+        max-width:520px;
+        margin:auto;
+    }
+
+    .player{
+        max-width:496px;
+        margin:auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- MAIN PAGE -->
+
+    <section id="libraryPage">
+
+        <header class="header">
+
+            <div class="brand">
+
+                <img
+                    id="brandAvatar"
+                    class="brand-avatar"
+                    alt="Amir Talles"
+                >
+
+                <div class="brand-name">
+                    Your Library
+                </div>
+
+            </div>
+
+            <button
+                class="add-button"
+                onclick="openTrackModal()"
+            >
+                +
+            </button>
+
+        </header>
+
+        <div class="filters">
+
+            <button class="filter active">
+                Artists
+            </button>
+
+            <button class="filter">
+                Tracks
+            </button>
+
+        </div>
+
+        <main class="content">
+
+            <div class="section-title">
+                Your Artist
+            </div>
+
+            <div
+                class="artist-card"
+                onclick="openArtist()"
+            >
+
+                <img
+                    id="artistPhoto"
+                    class="artist-photo"
+                    alt="Amir Talles"
+                >
+
+                <div>
+
+                    <div class="artist-name">
+                        Amir Talles
+                    </div>
+
+                    <div
+                        id="artistRole"
+                        class="artist-role"
+                    >
+                        Artist · 0 tracks
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </section>
+
+
+    <!-- ARTIST PAGE -->
+
+    <section
+        id="artistPage"
+        class="artist-page"
+    >
+
+        <div class="hero">
+
+            <img
+                id="heroImage"
+                class="hero-image"
+                alt="Amir Talles"
+            >
+
+            <div class="hero-gradient"></div>
+
+            <button
+                class="back-button"
+                onclick="closeArtist()"
+            >
+                ←
+            </button>
+
+            <div class="hero-info">
+
+                <div class="hero-name">
+                    Amir Talles
+                </div>
+
+                <div class="verified">
+
+                    <span class="verified-icon">
+                        ✓
+                    </span>
+
+                    Verified Artist
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="artist-controls">
+
+            <button class="follow">
+                Following
+            </button>
+
+            <button
+                class="play-button"
+                onclick="playFirstTrack()"
+            >
+                ▶
+            </button>
+
+        </div>
+
+
+        <div
+            class="section-title"
+            style="padding-left:20px;"
+        >
+            Popular
+        </div>
+
+
+        <div
+            id="trackList"
+            class="tracks"
+        ></div>
+
+    </section>
+
+</div>
+
+
+<!-- MINI PLAYER -->
+
+<div
+    id="player"
+    class="player"
+>
+
+    <img
+        id="playerCover"
+        class="player-cover"
+        alt=""
+    >
+
+    <div class="player-info">
+
+        <div
+            id="playerTitle"
+            class="player-title"
+        ></div>
+
+        <div class="player-subtitle">
+            Amir Talles
+        </div>
+
+    </div>
+
+    <button
+        class="player-open"
+        onclick="openCurrentTrack()"
+    >
+        ▶
+    </button>
+
+</div>
+
+
+<!-- BOTTOM NAV -->
+
+<nav class="bottom-nav">
+
+    <button
+        class="nav-item"
+        onclick="goHome()"
+    >
+        <span class="nav-icon">⌂</span>
+        Home
+    </button>
+
+    <button
+        class="nav-item"
+        onclick="searchTracks()"
+    >
+        <span class="nav-icon">⌕</span>
+        Search
+    </button>
+
+    <button
+        class="nav-item active"
+        onclick="goHome()"
+    >
+        <span class="nav-icon">▥</span>
+        Library
+    </button>
+
+    <button
+        class="nav-item"
+        onclick="openArtist()"
+    >
+        <span class="nav-icon">♫</span>
+        Artist
+    </button>
+
+    <button
+        class="nav-item"
+        onclick="openTrackModal()"
+    >
+        <span class="nav-icon">＋</span>
+        Create
+    </button>
+
+</nav>
+
+
+<!-- ADD TRACK -->
+
+<div
+    id="trackModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-title">
+            Add New Track
+        </div>
+
+
+        <div class="form-group">
+
+            <label class="form-label">
+                Track Name
+            </label>
+
+            <input
+                id="trackName"
+                class="input"
+                type="text"
+                placeholder="My New Song"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label class="form-label">
+                Track Link
+            </label>
+
+            <input
+                id="trackLink"
+                class="input"
+                type="url"
+                placeholder="https://..."
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label class="form-label">
+                Track Cover
+            </label>
+
+            <div class="upload">
+
+                <input
+                    id="trackCover"
+                    type="file"
+                    accept="image/*"
+                    onchange="previewCover(event)"
+                >
+
+                <div>
+                    کاور ترک را از گالری انتخاب کن
+                </div>
+
+                <img
+                    id="coverPreview"
+                    class="preview"
+                    alt="Preview"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="cancel"
+                onclick="closeModal()"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="save"
+                onclick="saveTrack()"
+            >
+                Save Track
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const STORAGE_KEY =
+    "amir_talles_music_library_v1";
+
+const DEFAULT_ARTIST_IMAGE =
+    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=900&q=85";
+
+const DEFAULT_TRACK_IMAGE =
+    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=700&q=85";
+
+let tracks = [];
+let selectedCover = "";
+let currentTrack = null;
+
+
+/* LOAD */
+
+function loadTracks(){
+
+    try{
+
+        tracks =
+            JSON.parse(
+                localStorage.getItem(STORAGE_KEY)
+            ) || [];
+
+    }catch(error){
+
+        tracks = [];
+
+    }
+
+}
+
+
+/* SAVE */
+
+function saveTracks(){
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(tracks)
+    );
+
+}
+
+
+/* IMAGES */
+
+function setupImages(){
+
+    document.getElementById(
+        "brandAvatar"
+    ).src = DEFAULT_ARTIST_IMAGE;
+
+    document.getElementById(
+        "artistPhoto"
+    ).src = DEFAULT_ARTIST_IMAGE;
+
+    document.getElementById(
+        "heroImage"
+    ).src = DEFAULT_ARTIST_IMAGE;
+
+}
+
+
+/* RENDER */
+
+function renderTracks(){
+
+    const list =
+        document.getElementById("trackList");
+
+    const role =
+        document.getElementById("artistRole");
+
+    role.textContent =
+        "Artist · " +
+        tracks.length +
+        (tracks.length === 1
+            ? " track"
+            : " tracks"
+        );
+
+    list.innerHTML = "";
+
+
+    if(tracks.length === 0){
+
+        list.innerHTML = `
+            <div class="empty">
+                هنوز هیچ ترکی اضافه نکردی.<br><br>
+                روی علامت + بزن و اولین ترک را اضافه کن.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    tracks.forEach((track,index)=>{
+
+        const row =
+            document.createElement("div");
+
+        row.className = "track";
+
+
+        row.innerHTML = `
+
+            <div class="track-number">
+                ${index + 1}
+            </div>
+
+            <img
+                class="track-cover"
+                src="${safeImage(track.cover)}"
+                alt=""
+            >
+
+            <div
+                class="track-info"
+                onclick="selectTrack(${track.id})"
+            >
+
+                <div class="track-title">
+                    ${escapeHTML(track.name)}
+                </div>
+
+                <div class="track-artist">
+                    Amir Talles
+                </div>
+
+            </div>
+
+            <a
+                class="track-link"
+                href="${safeURL(track.link)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                onclick="event.stopPropagation()"
+            >
+                ⋮
+            </a>
+
+        `;
+
+
+        list.appendChild(row);
+
+    });
+
+}
+
+
+/* OPEN ARTIST */
+
+function openArtist(){
+
+    document.getElementById(
+        "libraryPage"
+    ).style.display = "none";
+
+    document.getElementById(
+        "artistPage"
+    ).style.display = "block";
+
+    renderTracks();
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* CLOSE ARTIST */
+
+function closeArtist(){
+
+    document.getElementById(
+        "artistPage"
+    ).style.display = "none";
+
+    document.getElementById(
+        "libraryPage"
+    ).style.display = "block";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* HOME */
+
+function goHome(){
+
+    closeArtist();
+
+}
+
+
+/* MODAL */
+
+function openTrackModal(){
+
+    document.getElementById(
+        "trackModal"
+    ).style.display = "flex";
+
+}
+
+
+function closeModal(){
+
+    document.getElementById(
+        "trackModal"
+    ).style.display = "none";
+
+    document.getElementById(
+        "trackName"
+    ).value = "";
+
+    document.getElementById(
+        "trackLink"
+    ).value = "";
+
+    document.getElementById(
+        "trackCover"
+    ).value = "";
+
+    selectedCover = "";
+
+    const preview =
+        document.getElementById("coverPreview");
+
+    preview.src = "";
+    preview.style.display = "none";
+
+}
+
+
+/* PREVIEW COVER */
+
+function previewCover(event){
+
+    const file =
+        event.target.files[0];
+
+    if(!file) return;
+
+
+    if(!file.type.startsWith("image/")){
+
+        alert(
+            "لطفاً یک فایل تصویری انتخاب کن."
+        );
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload = function(e){
+
+        selectedCover =
+            e.target.result;
+
+        const preview =
+            document.getElementById(
+                "coverPreview"
+            );
+
+        preview.src =
+            selectedCover;
+
+        preview.style.display =
+            "block";
+
+    };
+
+
+    reader.readAsDataURL(file);
+
+}
+
+
+/* SAVE TRACK */
+
+function saveTrack(){
+
+    const name =
+        document.getElementById(
+            "trackName"
+        ).value.trim();
+
+    const link =
+        document.getElementById(
+            "trackLink"
+        ).value.trim();
+
+
+    if(!name){
+
+        alert(
+            "اسم ترک را وارد کن."
+        );
+
+        return;
+
+    }
+
+
+    if(!link){
+
+        alert(
+            "لینک ترک را وارد کن."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        new URL(link);
+
+    }catch(error){
+
+        alert(
+            "لینک واردشده معتبر نیست."
+        );
+
+        return;
+
+    }
+
+
+    const newTrack = {
+
+        id:Date.now(),
+
+        name:name,
+
+        link:link,
+
+        cover:
+            selectedCover ||
+            DEFAULT_TRACK_IMAGE
+
+    };
+
+
+    tracks.unshift(newTrack);
+
+    saveTracks();
+
+    renderTracks();
+
+    closeModal();
+
+    openArtist();
+
+}
+
+
+/* SELECT TRACK */
+
+function selectTrack(id){
+
+    const track =
+        tracks.find(
+            item => item.id === id
+        );
+
+    if(!track) return;
+
+    currentTrack = track;
+
+
+    document.getElementById(
+        "player"
+    ).style.display = "flex";
+
+
+    document.getElementById(
+        "playerCover"
+    ).src =
+        safeImage(track.cover);
+
+
+    document.getElementById(
+        "playerTitle"
+    ).textContent =
+        track.name;
+
+}
+
+
+/* OPEN LINK */
+
+function openCurrentTrack(){
+
+    if(
+        !currentTrack ||
+        !currentTrack.link
+    ) return;
+
+
+    window.open(
+        currentTrack.link,
+        "_blank"
+    );
+
+}
+
+
+/* PLAY FIRST */
+
+function playFirstTrack(){
+
+    if(tracks.length === 0){
+
+        openTrackModal();
+
+        return;
+
+    }
+
+
+    selectTrack(
+        tracks[0].id
+    );
+
+}
+
+
+/* SEARCH */
+
+function searchTracks(){
+
+    if(tracks.length === 0){
+
+        alert(
+            "هنوز هیچ ترکی اضافه نکردی."
+        );
+
+        return;
+
+    }
+
+
+    const query =
+        prompt(
+            "نام ترک را جستجو کن:"
+        );
+
+
+    if(!query) return;
+
+
+    const q =
+        query.toLowerCase().trim();
+
+
+    const result =
+        tracks.find(
+            track =>
+                track.name
+                    .toLowerCase()
+                    .includes(q)
+        );
+
+
+    if(!result){
+
+        alert(
+            "ترکی پیدا نشد."
+        );
+
+        return;
+
+    }
+
+
+    openArtist();
+
+
+    setTimeout(()=>{
+
+        selectTrack(
+            result.id
+        );
+
+    },250);
+
+}
+
+
+/* IMAGE SECURITY */
+
+function safeImage(value){
+
+    if(
+        typeof value !== "string" ||
+        !value
+    ){
+
+        return DEFAULT_TRACK_IMAGE;
+
+    }
+
+
+    if(
+        value.startsWith("data:image/") ||
+        value.startsWith("https://") ||
+        value.startsWith("http://")
+    ){
+
+        return value;
+
+    }
+
+
+    return DEFAULT_TRACK_IMAGE;
+
+}
+
+
+/* URL SECURITY */
+
+function safeURL(value){
+
+    if(
+        typeof value !== "string"
+    ){
+
+        return "#";
+
+    }
+
+
+    try{
+
+        const url =
+            new URL(value);
+
+
+        if(
+            url.protocol === "http:" ||
+            url.protocol === "https:"
+        ){
+
+            return url.href;
+
+        }
+
+    }catch(error){}
+
+
+    return "#";
+
+}
+
+
+/* ESCAPE */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* START */
+
+loadTracks();
+
+setupImages();
+
+renderTracks();
+
+
+/* CLOSE MODAL BY OUTSIDE TAP */
+
+document
+    .getElementById("trackModal")
+    .addEventListener(
+        "click",
+        function(event){
+
+            if(
+                event.target === this
+            ){
+
+                closeModal();
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
