@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Arch Cover Flow Music Player</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #831843;
+      transition: background-color 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    /* نیم‌دایره قوس پایین صفحه */
+    .bottom-arc-base {
+      position: absolute;
+      bottom: -480px;
+      width: 750px;
+      height: 750px;
+      border-radius: 50%;
+      background-color: #e5e7eb;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      height: 75vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1000px;
+      touch-action: pan-y;
+      z-index: 2;
+    }
+
+    .cards-wrapper {
+      position: relative;
+      width: 0;
+      height: 0;
+    }
+
+    .card {
+      position: absolute;
+      width: 150px;
+      height: 220px;
+      left: -75px;
+      top: -110px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+                  opacity 0.45s ease, 
+                  filter 0.45s ease;
+      will-change: transform, opacity;
+      cursor: pointer;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .track-details {
+      z-index: 3;
+      text-align: center;
+      color: #ffffff;
+      margin-bottom: 45px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .track-details h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    .track-details p {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bottom-arc-base"></div>
+
+  <div class="carousel-container" id="carousel-area">
+    <div class="cards-wrapper" id="cards-wrapper"></div>
+  </div>
+
+  <div class="track-details">
+    <h2 id="current-title">عنوان موزیک</h2>
+    <p id="current-artist">نام خواننده</p>
+  </div>
+
+  <script>
+    const tracks = [
+      {
+        title: "Ceramic Minimal",
+        artist: "Earthy Soul",
+        cover: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=500&q=80",
+        bgColor: "#78350f"
+      },
+      {
+        title: "Pattern Waves",
+        artist: "Nordic Beats",
+        cover: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500&q=80",
+        bgColor: "#831843"
+      },
+      {
+        title: "Pigeon Tone",
+        artist: "Studio Track",
+        cover: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=500&q=80",
+        bgColor: "#374151"
+      },
+      {
+        title: "Dark Portrait",
+        artist: "Minimal Voice",
+        cover: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&q=80",
+        bgColor: "#18181b"
+      },
+      {
+        title: "Abstract Kinetic",
+        artist: "Future Sound",
+        cover: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&q=80",
+        bgColor: "#0369a1"
+      }
+    ];
+
+    const cardsWrapper = document.getElementById('cards-wrapper');
+    const titleEl = document.getElementById('current-title');
+    const artistEl = document.getElementById('current-artist');
+    const carouselArea = document.getElementById('carousel-area');
+
+    let currentIndex = 2;
+    let isDragging = false;
+    let startX = 0;
+    let dragDistance = 0;
+
+    tracks.forEach((track, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<img src="${track.cover}" alt="${track.title}">`;
+      card.addEventListener('click', () => {
+        currentIndex = index;
+        updateCarousel();
+      });
+      cardsWrapper.appendChild(card);
+    });
+
+    const cards = document.querySelectorAll('.card');
+
+    function updateCarousel() {
+      const radius = 320;
+      const angleStep = 18;
+      const xSpacing = 95;
+
+      cards.forEach((card, index) => {
+        const offset = index - currentIndex;
+        const angle = offset * angleStep * (Math.PI / 180);
+        
+        const x = Math.sin(angle) * radius + (offset * (xSpacing - 45));
+        const y = (1 - Math.cos(angle)) * (radius * 0.85);
+        const rotateZ = offset * angleStep;
+        const scale = offset === 0 ? 1.05 : Math.max(0.75, 1 - Math.abs(offset) * 0.08);
+
+        card.style.transform = `translate3d(${x}px, ${y}px, 0px) rotateZ(${rotateZ}deg) scale(${scale})`;
+        card.style.zIndex = 100 - Math.abs(offset);
+        card.style.opacity = Math.abs(offset) > 3 ? 0 : 1;
+        card.style.filter = offset === 0 ? 'brightness(1)' : 'brightness(0.75)';
+      });
+
+      document.body.style.backgroundColor = tracks[currentIndex].bgColor;
+      titleEl.innerText = tracks[currentIndex].title;
+      artistEl.innerText = tracks[currentIndex].artist;
+    }
+
+    // کنترل لمسی برای موبایل
+    carouselArea.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      dragDistance = 0;
+    }, { passive: true });
+
+    carouselArea.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      dragDistance = e.touches[0].clientX - startX;
+    }, { passive: true });
+
+    carouselArea.addEventListener('touchend', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      const threshold = 40;
+
+      if (dragDistance < -threshold && currentIndex < tracks.length - 1) {
+        currentIndex++;
+      } else if (dragDistance > threshold && currentIndex > 0) {
+        currentIndex--;
+      }
+      updateCarousel();
+    });
+
+    updateCarousel();
+  </script>
+</body>
+</html>
