@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Arch Cover Flow Music Player</title>
+  <title>Centered Squeeze Cover Flow</title>
   <style>
     * {
       box-sizing: border-box;
@@ -19,35 +19,23 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       background-color: #831843;
+      /* ترنزیشن نرم و سینمایی تغییر رنگ پس‌زمینه */
       transition: background-color 0.8s cubic-bezier(0.25, 1, 0.5, 1);
       font-family: system-ui, -apple-system, sans-serif;
-    }
-
-    /* نیم‌دایره قوس پایین صفحه */
-    .bottom-arc-base {
-      position: absolute;
-      bottom: -480px;
-      width: 750px;
-      height: 750px;
-      border-radius: 50%;
-      background-color: #e5e7eb;
-      z-index: 1;
-      pointer-events: none;
     }
 
     .carousel-container {
       position: relative;
       width: 100%;
-      height: 75vh;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      perspective: 1000px;
+      perspective: 1200px;
       touch-action: pan-y;
-      z-index: 2;
     }
 
     .cards-wrapper {
@@ -58,16 +46,17 @@
 
     .card {
       position: absolute;
-      width: 150px;
-      height: 220px;
-      left: -75px;
-      top: -110px;
-      border-radius: 20px;
+      width: 160px;
+      height: 235px;
+      left: -80px;
+      top: -117px;
+      border-radius: 22px;
       overflow: hidden;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
-                  opacity 0.45s ease, 
-                  filter 0.45s ease;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      /* حرکت و بازگشت کشسان و نرم */
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15), 
+                  opacity 0.4s ease, 
+                  filter 0.4s ease;
       will-change: transform, opacity;
       cursor: pointer;
     }
@@ -81,28 +70,29 @@
     }
 
     .track-details {
-      z-index: 3;
+      position: absolute;
+      bottom: 60px;
+      z-index: 200;
       text-align: center;
       color: #ffffff;
-      margin-bottom: 45px;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
     }
 
     .track-details h2 {
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
     .track-details p {
       font-size: 0.95rem;
-      opacity: 0.85;
-      margin-top: 5px;
+      opacity: 0.8;
+      margin-top: 4px;
     }
   </style>
 </head>
 <body>
-
-  <div class="bottom-arc-base"></div>
 
   <div class="carousel-container" id="carousel-area">
     <div class="cards-wrapper" id="cards-wrapper"></div>
@@ -119,31 +109,31 @@
         title: "Ceramic Minimal",
         artist: "Earthy Soul",
         cover: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=500&q=80",
-        bgColor: "#78350f"
+        bgColor: "#5c2b09"
       },
       {
         title: "Pattern Waves",
         artist: "Nordic Beats",
         cover: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500&q=80",
-        bgColor: "#831843"
+        bgColor: "#701a35"
       },
       {
         title: "Pigeon Tone",
         artist: "Studio Track",
         cover: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=500&q=80",
-        bgColor: "#374151"
+        bgColor: "#2d3748"
       },
       {
         title: "Dark Portrait",
         artist: "Minimal Voice",
         cover: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&q=80",
-        bgColor: "#18181b"
+        bgColor: "#171717"
       },
       {
         title: "Abstract Kinetic",
         artist: "Future Sound",
         cover: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&q=80",
-        bgColor: "#0369a1"
+        bgColor: "#0c4a6e"
       }
     ];
 
@@ -155,7 +145,7 @@
     let currentIndex = 2;
     let isDragging = false;
     let startX = 0;
-    let dragDistance = 0;
+    let currentDragX = 0;
 
     tracks.forEach((track, index) => {
       const card = document.createElement('div');
@@ -170,41 +160,62 @@
 
     const cards = document.querySelectorAll('.card');
 
-    function updateCarousel() {
-      const radius = 320;
-      const angleStep = 18;
-      const xSpacing = 95;
+    function updateCarousel(dragProgress = 0) {
+      const radius = 300;
+      const angleStep = 15;
+      
+      // میزان فشرده شدن کارت‌ها به هم در هنگام اسکرول/درگ
+      const squeezeAmount = Math.min(Math.abs(dragProgress) * 25, 20);
+      const baseSpacing = 58 - squeezeAmount; // فاصله بسیار نزدیک‌تر
 
       cards.forEach((card, index) => {
-        const offset = index - currentIndex;
+        const offset = (index - currentIndex) - dragProgress;
         const angle = offset * angleStep * (Math.PI / 180);
         
-        const x = Math.sin(angle) * radius + (offset * (xSpacing - 45));
-        const y = (1 - Math.cos(angle)) * (radius * 0.85);
+        // محاسبه قوس متمرکز در وسط
+        const x = Math.sin(angle) * radius + (offset * baseSpacing);
+        const y = (1 - Math.cos(angle)) * (radius * 0.7);
         const rotateZ = offset * angleStep;
-        const scale = offset === 0 ? 1.05 : Math.max(0.75, 1 - Math.abs(offset) * 0.08);
+        
+        // محاسبه اسکیل برای برجسته‌سازی کارت مرکزی
+        const absOffset = Math.abs(offset);
+        const scale = Math.max(0.72, 1.06 - absOffset * 0.09);
+
+        // اعمال انیمیشن نرم در لحظه رها کردن
+        if (!isDragging) {
+          card.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 0.4s ease, filter 0.4s ease';
+        } else {
+          card.style.transition = 'none'; // برای دنبال کردن بدون تاخیر انگشت
+        }
 
         card.style.transform = `translate3d(${x}px, ${y}px, 0px) rotateZ(${rotateZ}deg) scale(${scale})`;
-        card.style.zIndex = 100 - Math.abs(offset);
-        card.style.opacity = Math.abs(offset) > 3 ? 0 : 1;
-        card.style.filter = offset === 0 ? 'brightness(1)' : 'brightness(0.75)';
+        card.style.zIndex = Math.round(100 - absOffset * 10);
+        card.style.opacity = absOffset > 3.2 ? 0 : 1;
+        card.style.filter = absOffset < 0.3 ? 'brightness(1)' : 'brightness(0.7)';
       });
 
-      document.body.style.backgroundColor = tracks[currentIndex].bgColor;
-      titleEl.innerText = tracks[currentIndex].title;
-      artistEl.innerText = tracks[currentIndex].artist;
+      // تغییر رنگ پس‌زمینه بر اساس آیتم فعال
+      const activeIdx = Math.max(0, Math.min(tracks.length - 1, Math.round(currentIndex + dragProgress)));
+      document.body.style.backgroundColor = tracks[activeIdx].bgColor;
+      titleEl.innerText = tracks[activeIdx].title;
+      artistEl.innerText = tracks[activeIdx].artist;
     }
 
     // کنترل لمسی برای موبایل
     carouselArea.addEventListener('touchstart', (e) => {
       isDragging = true;
       startX = e.touches[0].clientX;
-      dragDistance = 0;
+      currentDragX = 0;
     }, { passive: true });
 
     carouselArea.addEventListener('touchmove', (e) => {
       if (!isDragging) return;
-      dragDistance = e.touches[0].clientX - startX;
+      const diff = e.touches[0].clientX - startX;
+      currentDragX = diff;
+      
+      // محاسبه نسبت جابجایی بر اساس عرض صفحه
+      const dragProgress = -diff / (window.innerWidth * 0.45);
+      updateCarousel(dragProgress);
     }, { passive: true });
 
     carouselArea.addEventListener('touchend', () => {
@@ -212,15 +223,17 @@
       isDragging = false;
       const threshold = 40;
 
-      if (dragDistance < -threshold && currentIndex < tracks.length - 1) {
+      if (currentDragX < -threshold && currentIndex < tracks.length - 1) {
         currentIndex++;
-      } else if (dragDistance > threshold && currentIndex > 0) {
+      } else if (currentDragX > threshold && currentIndex > 0) {
         currentIndex--;
       }
-      updateCarousel();
+      
+      updateCarousel(0);
     });
 
-    updateCarousel();
+    // اجرای اولیه
+    updateCarousel(0);
   </script>
 </body>
 </html>
