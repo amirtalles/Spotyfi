@@ -235,16 +235,23 @@
       width: 100%;
       height: 220px;
       position: relative;
-      background: #0d1013;
+      background: #191e23;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
 
-    .card-cover video {
+    /* کاور ساز که مانع از سیاه شدن کادر می‌شود */
+    .card-cover img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.25s ease;
+    }
+
+    .guitar-card:active .card-cover img {
+      transform: scale(1.04);
     }
 
     .badge-360 {
@@ -332,7 +339,7 @@
     }
 
     /* ========================================================
-       MODAL: نمایش ۳۶۰ درجه واقعی
+       MODAL: ۳۶۰ درجه تمام‌صفحه
     ======================================================== */
     .viewer-360-modal {
       position: absolute;
@@ -480,12 +487,12 @@
         <button class="pill">Acoustic</button>
       </div>
 
-      <!-- کارت محصول -->
+      <!-- کارت محصول با کاور مطمئن -->
       <div class="cards-grid">
         <div class="guitar-card" onclick="open360Viewer()">
           <div class="card-cover">
-            <!-- پیش‌نمایش در کارت -->
-            <video src="./guitar-360.mp4" autoplay loop muted playsinline preload="metadata"></video>
+            <!-- تصویر کاور واقعی که کارت هرگز سیاه نماند -->
+            <img src="https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=600" alt="Ibanez White" />
             <span class="badge-360">360° Studio</span>
           </div>
           <div class="card-meta">
@@ -518,7 +525,7 @@
     </div>
 
     <!-- ========================================================
-         MODAL: چرخش ۳۶۰ درجه با حرکت انگشت و ماوس
+         MODAL: نمایش ۳۶۰ درجه
     ======================================================== -->
     <div class="viewer-360-modal" id="viewer360Modal">
       <div class="viewer-header">
@@ -530,6 +537,7 @@
       </div>
 
       <div class="viewer-stage" id="viewerStage">
+        <!-- ویدیوی ۳۶۰ درجه با لود مستقیم در گیت‌هاب -->
         <video id="mainStudioVideo" src="./guitar-360.mp4" playsinline loop muted preload="auto"></video>
       </div>
 
@@ -578,7 +586,7 @@
       }
     }
 
-    // چرخش تعاملی ویدیو با لمس و کشیدن
+    // چرخش تعاملی با کشیدن انگشت
     function startDrag(e) {
       isDragging = true;
       if (!video.paused) {
@@ -593,7 +601,6 @@
       const currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
       const diffX = currentX - startX;
 
-      // حساسیت مناسب برای چرخش روان مطابق طول ویدیو
       const sensitivity = 0.015;
       let targetTime = video.currentTime - (diffX * sensitivity);
 
