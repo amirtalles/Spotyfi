@@ -1,733 +1,174 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Ibanez Studio 360 Viewer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GUITAR.pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,600;0,900;1,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg-top: #ffffff;
-      --bg-dark: #121518;
-      --card-bg: #1c2126;
-      --pill-inactive: #252b31;
-      --text-white: #ffffff;
-      --text-muted: #8c96a0;
-      --accent: #ffffff;
-      --online: #22c55e;
-      --offline: #6b7280;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: #090a0c;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background-color: #dcdcdc;
+      font-family: 'Inter', sans-serif;
       min-height: 100vh;
-    }
-
-    .phone-container {
-      width: 100%;
-      max-width: 410px;
-      height: 860px;
-      background: var(--bg-dark);
-      border-radius: 44px;
-      overflow: hidden;
       display: flex;
-      flex-direction: column;
-      position: relative;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 8px #262a2f;
-      border: 4px solid #000;
-    }
-
-    /* Status Bar */
-    .status-bar {
-      background: var(--bg-top);
-      height: 32px;
-      padding: 8px 20px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #1a1a1a;
-      z-index: 20;
-    }
-
-    .weekday-badge {
-      font-weight: 600;
-      color: #666;
-      font-size: 0.78rem;
-    }
-
-    /* Top Section */
-    .top-section {
-      background: var(--bg-top);
-      padding: 6px 18px 12px;
-      border-bottom-left-radius: 24px;
-      border-bottom-right-radius: 24px;
-      position: relative;
-      z-index: 10;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .advisor-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .advisors-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #71717a;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .btn-auth {
-      background: #f4f4f5;
-      border: 1px solid #e4e4e7;
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: #18181b;
-      cursor: pointer;
-    }
-
-    .advisors-carousel {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 2px;
-    }
-    .advisors-carousel::-webkit-scrollbar { display: none; }
-
-    .advisor-story {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .advisor-avatar-box {
-      position: relative;
-      width: 48px;
-      height: 48px;
-    }
-
-    .advisor-ring {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 2px solid #ffffff;
-      padding: 1px;
-      background: #18181b;
-    }
-
-    .advisor-ring img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-
-    .status-dot {
-      position: absolute;
-      bottom: 1px;
-      right: 1px;
-      width: 10px;
-      height: 10px;
-      border: 2px solid #fff;
-      border-radius: 50%;
-      background: var(--online);
-    }
-
-    .advisor-name {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #27272a;
-    }
-
-    .advisor-status-text {
-      font-size: 0.6rem;
-      color: #71717a;
-      margin-top: -2px;
-    }
-
-    /* Content Area */
-    .content-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 14px 18px 105px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      scrollbar-width: none;
-    }
-    .content-area::-webkit-scrollbar { display: none; }
-
-    .feed-header {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--text-white);
-    }
-
-    .filter-pills {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .filter-pills::-webkit-scrollbar { display: none; }
-
-    .pill {
-      background: var(--pill-inactive);
-      color: var(--text-muted);
-      padding: 7px 18px;
-      border-radius: 20px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-    }
-
-    .pill.active {
-      background: #ffffff;
-      color: #000000;
-      font-weight: 700;
-    }
-
-    /* Cards Grid */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .guitar-card {
-      background: var(--card-bg);
-      border-radius: 20px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      cursor: pointer;
-    }
-
-    .card-cover {
-      width: 100%;
-      height: 220px;
-      position: relative;
-      background: #111417;
-      display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+
+    /* کادر بیرونی مطابق عکس */
+    .viewport {
+      width: 100%;
+      max-width: 1050px;
+      aspect-ratio: 1000 / 625;
+      background: #ffffff;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.18);
+      position: relative;
       overflow: hidden;
     }
 
-    /* عکس سبک برای کارت تا صفحه اصلی فوراً لود شود */
-    .card-cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .badge-360 {
+    /* تصویر اصلی ارسالی شما به عنوان پس‌زمینه کامل فریم */
+    .mockup-bg {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(6px);
-      padding: 4px 9px;
-      border-radius: 12px;
-      font-size: 0.65rem;
-      font-weight: 800;
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .card-meta {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .guitar-name {
-      color: var(--text-white);
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-
-    .guitar-price {
-      color: #ffffff;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    /* Floating Navigation */
-    .bottom-bar-wrapper {
-      position: absolute;
-      bottom: 18px;
+      top: 0;
       left: 0;
-      right: 0;
-      padding: 0 20px;
-      z-index: 50;
-      pointer-events: none;
-    }
-
-    .floating-bar {
-      pointer-events: auto;
-      background: rgba(25, 30, 36, 0.82);
-      backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 38px;
-      height: 66px;
-      padding: 0 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.55);
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      cursor: pointer;
-      color: #7b8590;
-    }
-
-    .nav-item svg {
-      width: 22px;
-      height: 22px;
-      stroke-width: 2;
-    }
-
-    .nav-item.active {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .nav-item.active svg {
-      stroke: #ffffff;
-    }
-
-    /* ========================================================
-       MODAL 360: سبک، پرسرعت با لودینگ اختصاصی
-    ======================================================== */
-    .viewer-360-modal {
-      position: absolute;
-      inset: 0;
-      background: #060708;
-      z-index: 300;
-      display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-      user-select: none;
-    }
-
-    .viewer-360-modal.open {
-      display: flex;
-    }
-
-    .viewer-header {
-      padding: 20px 18px 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .viewer-guitar-name {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .viewer-hint {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 3px;
-    }
-
-    .btn-close-viewer {
-      background: rgba(255, 255, 255, 0.18);
-      color: #fff;
-      border: none;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.1rem;
-    }
-
-    .viewer-stage {
-      flex: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      touch-action: none;
-      cursor: grab;
-      overflow: hidden;
-    }
-
-    .viewer-stage:active {
-      cursor: grabbing;
-    }
-
-    /* انیمیشن لودینگ سبک تا زمان آماده شدن ویدیو */
-    .loader-spinner {
-      position: absolute;
-      width: 38px;
-      height: 38px;
-      border: 3px solid rgba(255,255,255,0.2);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      display: none;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    #mainStudioVideo {
       width: 100%;
       height: 100%;
-      max-height: 560px;
-      object-fit: contain;
+      object-fit: cover;
       pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      z-index: 1;
     }
 
-    #mainStudioVideo.ready {
-      opacity: 1;
-    }
-
-    .viewer-controls-bar {
-      padding: 14px 20px 22px;
-      background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 10;
-    }
-
-    .slider-container {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      color: #fff;
-      font-size: 0.72rem;
-    }
-
-    .custom-range {
-      -webkit-appearance: none;
+    /* لایه اجزای تعاملی و کلیک‌خور روی عکس */
+    .interactive-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 6px;
-      border-radius: 5px;
-      background: #272d34;
-      outline: none;
+      height: 100%;
+      z-index: 2;
     }
 
-    .custom-range::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #ffffff;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(255,255,255,0.8);
-    }
-
-    .viewer-bottom-actions {
+    /* منوی بالا (Header) */
+    .nav-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 13%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      padding: 0 5%;
     }
 
-    .btn-auto-rotate {
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #fff;
-      padding: 9px 18px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
+    .brand-link {
+      width: 14%;
+      height: 60%;
       cursor: pointer;
     }
 
-    .btn-buy-360 {
-      background: #ffffff;
-      color: #000000;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 20px;
-      font-size: 0.84rem;
-      font-weight: 800;
+    .nav-links {
+      display: flex;
+      gap: 22px;
+      margin-left: 5.5%;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: transparent; /* شفاف شده تا متن روی خود تصویر دیده شود و همزمان قابل کلیک باشد */
+      height: 24px;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .search-btn {
+      margin-left: auto;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    /* دکمه‌های هاور اسلایدر سمت راست (02 و کالکشن) */
+    .slider-tag {
+      position: absolute;
+      top: 15%;
+      right: 5%;
+      width: 15%;
+      height: 25%;
+      cursor: pointer;
+    }
+
+    /* کارت تعاملی گوشه پایین سمت راست (Guitar Riffs & Licks) */
+    .floating-card-action {
+      position: absolute;
+      bottom: 7.5%;
+      right: 5.2%;
+      width: 16.5%;
+      height: 30%;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+    }
+
+    .floating-card-action:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+      outline: 2px solid rgba(255,255,255,0.7);
+    }
+
+    /* خط راهنمای اسکرول در پایین سمت چپ */
+    .scroll-action {
+      position: absolute;
+      bottom: 12%;
+      left: 6%;
+      width: 15%;
+      height: 4%;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <div class="phone-container">
+  <div class="viewport">
+    <!-- تصویر ارسالی شما (نام فایل را با فایلتان یکسان کنید) -->
+    <img src="guitar-mockup.png" alt="Guitar Website Interface" class="mockup-bg">
 
-    <!-- Status Bar -->
-    <div class="status-bar">
-      <span>9:41</span>
-      <span class="weekday-badge" id="currentDay">Today</span>
+    <!-- لایه‌های کلیک‌خور و ناوبری منطبق بر روی طراحی -->
+    <div class="interactive-layer">
+      
+      <header class="nav-bar">
+        <a href="#home" class="brand-link" title="GUITAR.pro Home"></a>
+        <nav class="nav-links">
+          <a href="#guitars" title="Guitars" style="width: 45px;"></a>
+          <a href="#pedals" title="Pedals" style="width: 40px;"></a>
+          <a href="#amps" title="Amps" style="width: 35px;"></a>
+          <a href="#accessories" title="Accessories" style="width: 70px;"></a>
+        </nav>
+        <div class="search-btn" title="Search"></div>
+      </header>
+
+      <!-- تگ اسلایدر و دسته‌بندی جدید -->
+      <a href="#collection-02" class="slider-tag" title="View 02 - Latest New Collection"></a>
+
+      <!-- اکشن کلیک برای ویدیو/کارت Guitar Riffs & Licks -->
+      <a href="#riffs" class="floating-card-action" title="Guitar Riffs & Licks - See More"></a>
+
+      <!-- اسکرول و گشت‌وگذار -->
+      <a href="#explore" class="scroll-action" title="Scroll and explore"></a>
+
     </div>
-
-    <!-- Top Section -->
-    <div class="top-section">
-      <div class="advisor-header-row">
-        <div class="advisors-label">
-          <span>🎸</span> Guitar Advisors
-        </div>
-        <button class="btn-auth">Amir (Online)</button>
-      </div>
-      <div class="advisors-carousel">
-        <div class="advisor-story">
-          <div class="advisor-avatar-box">
-            <div class="advisor-ring">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Amir" />
-            </div>
-            <div class="status-dot"></div>
-          </div>
-          <span class="advisor-name">Amir</span>
-          <span class="advisor-status-text">Online</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Content Area -->
-    <div class="content-area">
-      <div class="feed-header">Discover Guitars</div>
-
-      <div class="filter-pills">
-        <button class="pill active">For You</button>
-        <button class="pill">Electric</button>
-        <button class="pill">Acoustic</button>
-      </div>
-
-      <!-- کارت محصول با تصویر سبک و لود فوری -->
-      <div class="cards-grid">
-        <div class="guitar-card" onclick="open360Viewer()">
-          <div class="card-cover">
-            <!-- عکس بسیار سبک با لود فوری -->
-            <img src="./guitar-white.png" onerror="this.src='https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=400'" alt="Ibanez White" loading="eager" />
-            <span class="badge-360">360° Studio</span>
-          </div>
-          <div class="card-meta">
-            <div class="guitar-name">Ibanez Solid White</div>
-            <div class="guitar-price">$1,280</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Floating Navigation Bar -->
-    <div class="bottom-bar-wrapper">
-      <nav class="floating-bar">
-        <div class="nav-item active">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-          </svg>
-        </div>
-        <div class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/>
-          </svg>
-        </div>
-        <div class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-          </svg>
-        </div>
-      </nav>
-    </div>
-
-    <!-- ========================================================
-         MODAL 360
-    ======================================================== -->
-    <div class="viewer-360-modal" id="viewer360Modal">
-      <div class="viewer-header">
-        <div class="viewer-title-wrap">
-          <div class="viewer-guitar-name">Ibanez Solid White</div>
-          <div class="viewer-hint">Drag guitar or use slider to rotate</div>
-        </div>
-        <button class="btn-close-viewer" onclick="close360Viewer()">✕</button>
-      </div>
-
-      <div class="viewer-stage" id="viewerStage">
-        <div class="loader-spinner" id="videoLoader"></div>
-        <!-- فقط متادیتا پیش‌بارگذاری می‌شود تا حجم الکی مصرف نشود -->
-        <video id="mainStudioVideo" src="guitar-360.mp4" playsinline loop muted preload="metadata"></video>
-      </div>
-
-      <div class="viewer-controls-bar">
-        <div class="slider-container">
-          <span>Rotate 360°:</span>
-          <input type="range" class="custom-range" id="rotateSlider" min="0" max="100" value="0" oninput="onSliderMove(this.value)">
-        </div>
-
-        <div class="viewer-bottom-actions">
-          <button class="btn-auto-rotate" id="btnAutoRotate" onclick="toggleAutoRotate()">Auto Rotate: On</button>
-          <button class="btn-buy-360" onclick="alert('Added to cart!')">Buy Now</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <script>
-    const modal = document.getElementById("viewer360Modal");
-    const video = document.getElementById("mainStudioVideo");
-    const stage = document.getElementById("viewerStage");
-    const autoRotateBtn = document.getElementById("btnAutoRotate");
-    const slider = document.getElementById("rotateSlider");
-    const loader = document.getElementById("videoLoader");
-
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    document.getElementById("currentDay").textContent = days[new Date().getDay()];
-
-    video.addEventListener('canplay', () => {
-      loader.style.display = "none";
-      video.classList.add("ready");
-    });
-
-    video.addEventListener('waiting', () => {
-      loader.style.display = "block";
-    });
-
-    function open360Viewer() {
-      modal.classList.add("open");
-      video.muted = true;
-      
-      if (video.readyState < 2) {
-        loader.style.display = "block";
-      }
-
-      video.play().then(() => {
-        autoRotateBtn.textContent = "Auto Rotate: On";
-      }).catch(() => {});
-    }
-
-    function close360Viewer() {
-      video.pause();
-      modal.classList.remove("open");
-    }
-
-    function toggleAutoRotate() {
-      if (video.paused) {
-        video.play();
-        autoRotateBtn.textContent = "Auto Rotate: On";
-      } else {
-        video.pause();
-        autoRotateBtn.textContent = "Auto Rotate: Off";
-      }
-    }
-
-    video.ontimeupdate = () => {
-      if (!video.paused && video.duration) {
-        slider.value = (video.currentTime / video.duration) * 100;
-      }
-    };
-
-    function onSliderMove(val) {
-      if (!video.duration) return;
-      if (!video.paused) {
-        video.pause();
-        autoRotateBtn.textContent = "Auto Rotate: Off";
-      }
-      video.currentTime = (val / 100) * video.duration;
-    }
-
-    let isTouching = false;
-    let lastX = 0;
-
-    stage.addEventListener('touchstart', (e) => {
-      isTouching = true;
-      if (!video.paused) {
-        video.pause();
-        autoRotateBtn.textContent = "Auto Rotate: Off";
-      }
-      lastX = e.touches[0].clientX;
-    }, { passive: true });
-
-    stage.addEventListener('touchmove', (e) => {
-      if (!isTouching || !video.duration) return;
-      const currentX = e.touches[0].clientX;
-      const diffX = currentX - lastX;
-      lastX = currentX;
-
-      const dur = video.duration;
-      let newTime = video.currentTime - (diffX * 0.02);
-      newTime = ((newTime % dur) + dur) % dur;
-
-      video.currentTime = newTime;
-      slider.value = (newTime / dur) * 100;
-    }, { passive: true });
-
-    stage.addEventListener('touchend', () => {
-      isTouching = false;
-    });
-
-    let isMouseDown = false;
-    stage.addEventListener('mousedown', (e) => {
-      isMouseDown = true;
-      if (!video.paused) {
-        video.pause();
-        autoRotateBtn.textContent = "Auto Rotate: Off";
-      }
-      lastX = e.clientX;
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!isMouseDown || !video.duration) return;
-      const diffX = e.clientX - lastX;
-      lastX = e.clientX;
-
-      const dur = video.duration;
-      let newTime = video.currentTime - (diffX * 0.02);
-      newTime = ((newTime % dur) + dur) % dur;
-
-      video.currentTime = newTime;
-      slider.value = (newTime / dur) * 100;
-    });
-
-    window.addEventListener('mouseup', () => {
-      isMouseDown = false;
-    });
-  </script>
 </body>
 </html>
