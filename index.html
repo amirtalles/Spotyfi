@@ -332,7 +332,7 @@
     }
 
     /* ========================================================
-       MODAL: نمایشگر لمسی ۳۶۰ درجه
+       MODAL: نمایش ۳۶۰ درجه واقعی
     ======================================================== */
     .viewer-360-modal {
       position: absolute;
@@ -484,7 +484,8 @@
       <div class="cards-grid">
         <div class="guitar-card" onclick="open360Viewer()">
           <div class="card-cover">
-            <video src="guitar-360.mp4" autoplay loop muted playsinline></video>
+            <!-- پیش‌نمایش در کارت -->
+            <video src="./guitar-360.mp4" autoplay loop muted playsinline preload="metadata"></video>
             <span class="badge-360">360° Studio</span>
           </div>
           <div class="card-meta">
@@ -517,7 +518,7 @@
     </div>
 
     <!-- ========================================================
-         MODAL: نمایش ۳۶۰ درجه با کشیدن انگشت مستقیم روی گیتار
+         MODAL: چرخش ۳۶۰ درجه با حرکت انگشت و ماوس
     ======================================================== -->
     <div class="viewer-360-modal" id="viewer360Modal">
       <div class="viewer-header">
@@ -529,7 +530,7 @@
       </div>
 
       <div class="viewer-stage" id="viewerStage">
-        <video id="mainStudioVideo" src="guitar-360.mp4" playsinline loop muted></video>
+        <video id="mainStudioVideo" src="./guitar-360.mp4" playsinline loop muted preload="auto"></video>
       </div>
 
       <div class="viewer-controls-bar">
@@ -577,7 +578,7 @@
       }
     }
 
-    // اسکراب مستقیم با لمس و کشیدن دست روی صفحه
+    // چرخش تعاملی ویدیو با لمس و کشیدن
     function startDrag(e) {
       isDragging = true;
       if (!video.paused) {
@@ -592,7 +593,7 @@
       const currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
       const diffX = currentX - startX;
 
-      // تنظیم زاویه ویدیو متناسب با جهت و میزان کشیدن دست
+      // حساسیت مناسب برای چرخش روان مطابق طول ویدیو
       const sensitivity = 0.015;
       let targetTime = video.currentTime - (diffX * sensitivity);
 
