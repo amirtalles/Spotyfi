@@ -235,24 +235,19 @@
       width: 100%;
       height: 220px;
       position: relative;
-      background: #191e23;
+      background: #0d1013;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
     }
 
-    /* عکس گیتار سفید شما */
-    .card-cover img {
+    /* نمایش مستقیم فریم گیتار سفید شما در کارت */
+    .card-cover video {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center;
-      transition: transform 0.25s ease;
-    }
-
-    .guitar-card:active .card-cover img {
-      transform: scale(1.04);
+      pointer-events: none;
     }
 
     .badge-360 {
@@ -340,7 +335,7 @@
     }
 
     /* ========================================================
-       MODAL: ۳۶۰ درجه تمام‌صفحه
+       MODAL: ۳۶۰ درجه تعاملی و پرسرعت
     ======================================================== */
     .viewer-360-modal {
       position: absolute;
@@ -481,19 +476,18 @@
     <div class="content-area">
       <div class="feed-header">Discover Guitars</div>
 
-      <!-- ۳ تب فیلتر -->
       <div class="filter-pills">
         <button class="pill active">For You</button>
         <button class="pill">Electric</button>
         <button class="pill">Acoustic</button>
       </div>
 
-      <!-- کارت محصول با تصویر گیتار سفید شما -->
+      <!-- کارت محصول -->
       <div class="cards-grid">
         <div class="guitar-card" onclick="open360Viewer()">
           <div class="card-cover">
-            <!-- تصویر گیتار سفید شما -->
-            <img src="./guitar-white.png" alt="Ibanez White" />
+            <!-- ویدیوی ساز سفید شما به عنوان کاور زنده کارت -->
+            <video src="./guitar-360.mp4#t=0.001" playsinline muted preload="auto"></video>
             <span class="badge-360">360° Studio</span>
           </div>
           <div class="card-meta">
@@ -526,7 +520,7 @@
     </div>
 
     <!-- ========================================================
-         MODAL: نمایش ۳۶۰ درجه با ویدیوی اختصاصی شما
+         MODAL: پلیر ۳۶۰ درجه لمسی
     ======================================================== -->
     <div class="viewer-360-modal" id="viewer360Modal">
       <div class="viewer-header">
@@ -538,7 +532,6 @@
       </div>
 
       <div class="viewer-stage" id="viewerStage">
-        <!-- ویدیوی گیتار سفید شما -->
         <video id="mainStudioVideo" src="./guitar-360.mp4" playsinline loop muted preload="auto"></video>
       </div>
 
@@ -558,6 +551,7 @@
 
     let isDragging = false;
     let startX = 0;
+    let accumulatedTime = 0;
 
     function setDate() {
       const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -567,8 +561,13 @@
 
     function open360Viewer() {
       modal.classList.add("open");
-      video.currentTime = 0;
-      video.pause();
+      
+      // فعال‌سازی پخش در اندروید بدون قفل شدن
+      video.play().then(() => {
+        video.pause();
+        accumulatedTime = video.currentTime;
+      }).catch(() => {});
+      
       autoRotateBtn.textContent = "Auto Rotate: Off";
     }
 
@@ -583,45 +582,55 @@
         autoRotateBtn.textContent = "Auto Rotate: On";
       } else {
         video.pause();
+        accumulatedTime = video.currentTime;
         autoRotateBtn.textContent = "Auto Rotate: Off";
       }
     }
 
-    // چرخش ساز با کشیدن دست روی صفحه
+    // کنترل دقیق چرخش با لمس صفحه
     function startDrag(e) {
       isDragging = true;
       if (!video.paused) {
         video.pause();
         autoRotateBtn.textContent = "Auto Rotate: Off";
       }
+      accumulatedTime = video.currentTime;
       startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
     }
 
     function moveDrag(e) {
-      if (!isDragging || !video.duration) return;
+      if (!isDragging || isNaN(video.duration)) return;
+      
       const currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
       const diffX = currentX - startX;
 
-      const sensitivity = 0.015;
-      let targetTime = video.currentTime - (diffX * sensitivity);
+      // ضریب حساسیت دقیق برای چرخش متناسب با حرکت انگشت
+      const speed = 0.025;
+      let targetTime = accumulatedTime - (diffX * speed);
 
-      if (targetTime < 0) targetTime = video.duration + targetTime;
-      if (targetTime > video.duration) targetTime = targetTime - video.duration;
+      // حلقه بی‌نهایت ۳۶۰ درجه
+      const dur = video.duration;
+      targetTime = ((targetTime % dur) + dur) % dur;
 
       video.currentTime = targetTime;
-      startX = currentX;
     }
 
     function endDrag() {
-      isDragging = false;
+      if (isDragging) {
+        isDragging = false;
+        accumulatedTime = video.currentTime;
+      }
     }
 
     stage.addEventListener('mousedown', startDrag);
     window.addEventListener('mousemove', moveDrag);
     window.addEventListener('mouseup', endDrag);
 
-    stage.addEventListener('touchstart', startDrag, { passive: true });
-    window.addEventListener('touchmove', moveDrag, { passive: true });
+    stage.addEventListener('touchstart', startDrag, { passive: false });
+    window.addEventListener('touchmove', (e) => {
+      e.preventDefault(); // جلوگیری از اسکرول ناخواسته صفحه هنگام چرخاندن گیتار
+      moveDrag(e);
+    }, { passive: false });
     window.addEventListener('touchend', endDrag);
   </script>
 </body>
