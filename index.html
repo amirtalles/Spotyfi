@@ -242,11 +242,12 @@
       overflow: hidden;
     }
 
-    .card-cover video {
+    /* عکس سبک برای کارت تا صفحه اصلی فوراً لود شود */
+    .card-cover img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      pointer-events: none;
+      display: block;
     }
 
     .badge-360 {
@@ -334,7 +335,7 @@
     }
 
     /* ========================================================
-       MODAL 360
+       MODAL 360: سبک، پرسرعت با لودینگ اختصاصی
     ======================================================== */
     .viewer-360-modal {
       position: absolute;
@@ -401,12 +402,34 @@
       cursor: grabbing;
     }
 
+    /* انیمیشن لودینگ سبک تا زمان آماده شدن ویدیو */
+    .loader-spinner {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     #mainStudioVideo {
       width: 100%;
       height: 100%;
       max-height: 560px;
       object-fit: contain;
       pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #mainStudioVideo.ready {
+      opacity: 1;
     }
 
     .viewer-controls-bar {
@@ -418,7 +441,6 @@
       z-index: 10;
     }
 
-    /* نوار اسلایدر چرخشی ۳۶۰ */
     .slider-container {
       display: flex;
       flex-direction: column;
@@ -517,11 +539,12 @@
         <button class="pill">Acoustic</button>
       </div>
 
-      <!-- کارت محصول -->
+      <!-- کارت محصول با تصویر سبک و لود فوری -->
       <div class="cards-grid">
         <div class="guitar-card" onclick="open360Viewer()">
           <div class="card-cover">
-            <video id="cardPreviewVideo" src="guitar-360.mp4" playsinline muted loop autoplay></video>
+            <!-- عکس بسیار سبک با لود فوری -->
+            <img src="./guitar-white.png" onerror="this.src='https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=400'" alt="Ibanez White" loading="eager" />
             <span class="badge-360">360° Studio</span>
           </div>
           <div class="card-meta">
@@ -554,7 +577,7 @@
     </div>
 
     <!-- ========================================================
-         MODAL 360: تعاملی با دو حالت لمس مستقیم و اسلایدر
+         MODAL 360
     ======================================================== -->
     <div class="viewer-360-modal" id="viewer360Modal">
       <div class="viewer-header">
@@ -566,11 +589,12 @@
       </div>
 
       <div class="viewer-stage" id="viewerStage">
-        <video id="mainStudioVideo" src="guitar-360.mp4" playsinline loop muted></video>
+        <div class="loader-spinner" id="videoLoader"></div>
+        <!-- فقط متادیتا پیش‌بارگذاری می‌شود تا حجم الکی مصرف نشود -->
+        <video id="mainStudioVideo" src="guitar-360.mp4" playsinline loop muted preload="metadata"></video>
       </div>
 
       <div class="viewer-controls-bar">
-        <!-- اسلایدر تضمینی برای چرخش در اندروید -->
         <div class="slider-container">
           <span>Rotate 360°:</span>
           <input type="range" class="custom-range" id="rotateSlider" min="0" max="100" value="0" oninput="onSliderMove(this.value)">
@@ -591,21 +615,28 @@
     const stage = document.getElementById("viewerStage");
     const autoRotateBtn = document.getElementById("btnAutoRotate");
     const slider = document.getElementById("rotateSlider");
-    const cardVideo = document.getElementById("cardPreviewVideo");
+    const loader = document.getElementById("videoLoader");
 
-    window.addEventListener('load', () => {
-      if (cardVideo) {
-        cardVideo.muted = true;
-        cardVideo.play().catch(() => {});
-      }
-      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      document.getElementById("currentDay").textContent = days[new Date().getDay()];
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    document.getElementById("currentDay").textContent = days[new Date().getDay()];
+
+    video.addEventListener('canplay', () => {
+      loader.style.display = "none";
+      video.classList.add("ready");
+    });
+
+    video.addEventListener('waiting', () => {
+      loader.style.display = "block";
     });
 
     function open360Viewer() {
       modal.classList.add("open");
       video.muted = true;
-      // ساز در ابتدا به آرامی می‌چرخد تا موتور ویدیوی کروم بیدار شود
+      
+      if (video.readyState < 2) {
+        loader.style.display = "block";
+      }
+
       video.play().then(() => {
         autoRotateBtn.textContent = "Auto Rotate: On";
       }).catch(() => {});
@@ -626,14 +657,12 @@
       }
     }
 
-    // به‌روزرسانی اسلایدر با گذشت زمان چرخش ویدیو
     video.ontimeupdate = () => {
       if (!video.paused && video.duration) {
         slider.value = (video.currentTime / video.duration) * 100;
       }
     };
 
-    // ۱. چرخش با اسلایدر (۱۰۰٪ بدون لگ در اندروید)
     function onSliderMove(val) {
       if (!video.duration) return;
       if (!video.paused) {
@@ -643,7 +672,6 @@
       video.currentTime = (val / 100) * video.duration;
     }
 
-    // ۲. چرخش با کشیدن انگشت مستقیم روی بدنه ساز
     let isTouching = false;
     let lastX = 0;
 
@@ -663,7 +691,6 @@
       lastX = currentX;
 
       const dur = video.duration;
-      // حساسیت مناسب حرکت
       let newTime = video.currentTime - (diffX * 0.02);
       newTime = ((newTime % dur) + dur) % dur;
 
@@ -675,12 +702,13 @@
       isTouching = false;
     });
 
-    // پشتیبانی از درگ با ماوس (در حالت دسکتاپ)
     let isMouseDown = false;
     stage.addEventListener('mousedown', (e) => {
       isMouseDown = true;
-      video.pause();
-      autoRotateBtn.textContent = "Auto Rotate: Off";
+      if (!video.paused) {
+        video.pause();
+        autoRotateBtn.textContent = "Auto Rotate: Off";
+      }
       lastX = e.clientX;
     });
 
