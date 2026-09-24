@@ -235,14 +235,13 @@
       width: 100%;
       height: 220px;
       position: relative;
-      background: #0d1013;
+      background: #111417;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
     }
 
-    /* نمایش مستقیم فریم گیتار سفید شما در کارت */
     .card-cover video {
       width: 100%;
       height: 100%;
@@ -335,12 +334,12 @@
     }
 
     /* ========================================================
-       MODAL: ۳۶۰ درجه تعاملی و پرسرعت
+       MODAL 360
     ======================================================== */
     .viewer-360-modal {
       position: absolute;
       inset: 0;
-      background: #000000;
+      background: #060708;
       z-index: 300;
       display: none;
       flex-direction: column;
@@ -354,7 +353,7 @@
     }
 
     .viewer-header {
-      padding: 24px 20px 10px;
+      padding: 20px 18px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -374,7 +373,7 @@
     }
 
     .btn-close-viewer {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.18);
       color: #fff;
       border: none;
       width: 38px;
@@ -395,6 +394,7 @@
       justify-content: center;
       touch-action: none;
       cursor: grab;
+      overflow: hidden;
     }
 
     .viewer-stage:active {
@@ -404,22 +404,57 @@
     #mainStudioVideo {
       width: 100%;
       height: 100%;
+      max-height: 560px;
       object-fit: contain;
       pointer-events: none;
     }
 
     .viewer-controls-bar {
-      padding: 16px 20px 28px;
+      padding: 14px 20px 22px;
       background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 10;
+    }
+
+    /* نوار اسلایدر چرخشی ۳۶۰ */
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      color: #fff;
+      font-size: 0.72rem;
+    }
+
+    .custom-range {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      background: #272d34;
+      outline: none;
+    }
+
+    .custom-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255,255,255,0.8);
+    }
+
+    .viewer-bottom-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 10;
     }
 
     .btn-auto-rotate {
       background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       color: #fff;
       padding: 9px 18px;
       border-radius: 20px;
@@ -486,8 +521,7 @@
       <div class="cards-grid">
         <div class="guitar-card" onclick="open360Viewer()">
           <div class="card-cover">
-            <!-- ویدیوی ساز سفید شما به عنوان کاور زنده کارت -->
-            <video src="./guitar-360.mp4#t=0.001" playsinline muted preload="auto"></video>
+            <video id="cardPreviewVideo" src="guitar-360.mp4" playsinline muted loop autoplay></video>
             <span class="badge-360">360° Studio</span>
           </div>
           <div class="card-meta">
@@ -520,24 +554,32 @@
     </div>
 
     <!-- ========================================================
-         MODAL: پلیر ۳۶۰ درجه لمسی
+         MODAL 360: تعاملی با دو حالت لمس مستقیم و اسلایدر
     ======================================================== -->
     <div class="viewer-360-modal" id="viewer360Modal">
       <div class="viewer-header">
         <div class="viewer-title-wrap">
           <div class="viewer-guitar-name">Ibanez Solid White</div>
-          <div class="viewer-hint">Drag left or right on guitar to rotate</div>
+          <div class="viewer-hint">Drag guitar or use slider to rotate</div>
         </div>
         <button class="btn-close-viewer" onclick="close360Viewer()">✕</button>
       </div>
 
       <div class="viewer-stage" id="viewerStage">
-        <video id="mainStudioVideo" src="./guitar-360.mp4" playsinline loop muted preload="auto"></video>
+        <video id="mainStudioVideo" src="guitar-360.mp4" playsinline loop muted></video>
       </div>
 
       <div class="viewer-controls-bar">
-        <button class="btn-auto-rotate" id="btnAutoRotate" onclick="toggleAutoRotate()">Auto Rotate: Off</button>
-        <button class="btn-buy-360" onclick="alert('Added to cart!')">Buy Now</button>
+        <!-- اسلایدر تضمینی برای چرخش در اندروید -->
+        <div class="slider-container">
+          <span>Rotate 360°:</span>
+          <input type="range" class="custom-range" id="rotateSlider" min="0" max="100" value="0" oninput="onSliderMove(this.value)">
+        </div>
+
+        <div class="viewer-bottom-actions">
+          <button class="btn-auto-rotate" id="btnAutoRotate" onclick="toggleAutoRotate()">Auto Rotate: On</button>
+          <button class="btn-buy-360" onclick="alert('Added to cart!')">Buy Now</button>
+        </div>
       </div>
     </div>
 
@@ -548,27 +590,25 @@
     const video = document.getElementById("mainStudioVideo");
     const stage = document.getElementById("viewerStage");
     const autoRotateBtn = document.getElementById("btnAutoRotate");
+    const slider = document.getElementById("rotateSlider");
+    const cardVideo = document.getElementById("cardPreviewVideo");
 
-    let isDragging = false;
-    let startX = 0;
-    let accumulatedTime = 0;
-
-    function setDate() {
+    window.addEventListener('load', () => {
+      if (cardVideo) {
+        cardVideo.muted = true;
+        cardVideo.play().catch(() => {});
+      }
       const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
       document.getElementById("currentDay").textContent = days[new Date().getDay()];
-    }
-    setDate();
+    });
 
     function open360Viewer() {
       modal.classList.add("open");
-      
-      // فعال‌سازی پخش در اندروید بدون قفل شدن
+      video.muted = true;
+      // ساز در ابتدا به آرامی می‌چرخد تا موتور ویدیوی کروم بیدار شود
       video.play().then(() => {
-        video.pause();
-        accumulatedTime = video.currentTime;
+        autoRotateBtn.textContent = "Auto Rotate: On";
       }).catch(() => {});
-      
-      autoRotateBtn.textContent = "Auto Rotate: Off";
     }
 
     function close360Viewer() {
@@ -582,56 +622,84 @@
         autoRotateBtn.textContent = "Auto Rotate: On";
       } else {
         video.pause();
-        accumulatedTime = video.currentTime;
         autoRotateBtn.textContent = "Auto Rotate: Off";
       }
     }
 
-    // کنترل دقیق چرخش با لمس صفحه
-    function startDrag(e) {
-      isDragging = true;
+    // به‌روزرسانی اسلایدر با گذشت زمان چرخش ویدیو
+    video.ontimeupdate = () => {
+      if (!video.paused && video.duration) {
+        slider.value = (video.currentTime / video.duration) * 100;
+      }
+    };
+
+    // ۱. چرخش با اسلایدر (۱۰۰٪ بدون لگ در اندروید)
+    function onSliderMove(val) {
+      if (!video.duration) return;
       if (!video.paused) {
         video.pause();
         autoRotateBtn.textContent = "Auto Rotate: Off";
       }
-      accumulatedTime = video.currentTime;
-      startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      video.currentTime = (val / 100) * video.duration;
     }
 
-    function moveDrag(e) {
-      if (!isDragging || isNaN(video.duration)) return;
-      
-      const currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-      const diffX = currentX - startX;
+    // ۲. چرخش با کشیدن انگشت مستقیم روی بدنه ساز
+    let isTouching = false;
+    let lastX = 0;
 
-      // ضریب حساسیت دقیق برای چرخش متناسب با حرکت انگشت
-      const speed = 0.025;
-      let targetTime = accumulatedTime - (diffX * speed);
-
-      // حلقه بی‌نهایت ۳۶۰ درجه
-      const dur = video.duration;
-      targetTime = ((targetTime % dur) + dur) % dur;
-
-      video.currentTime = targetTime;
-    }
-
-    function endDrag() {
-      if (isDragging) {
-        isDragging = false;
-        accumulatedTime = video.currentTime;
+    stage.addEventListener('touchstart', (e) => {
+      isTouching = true;
+      if (!video.paused) {
+        video.pause();
+        autoRotateBtn.textContent = "Auto Rotate: Off";
       }
-    }
+      lastX = e.touches[0].clientX;
+    }, { passive: true });
 
-    stage.addEventListener('mousedown', startDrag);
-    window.addEventListener('mousemove', moveDrag);
-    window.addEventListener('mouseup', endDrag);
+    stage.addEventListener('touchmove', (e) => {
+      if (!isTouching || !video.duration) return;
+      const currentX = e.touches[0].clientX;
+      const diffX = currentX - lastX;
+      lastX = currentX;
 
-    stage.addEventListener('touchstart', startDrag, { passive: false });
-    window.addEventListener('touchmove', (e) => {
-      e.preventDefault(); // جلوگیری از اسکرول ناخواسته صفحه هنگام چرخاندن گیتار
-      moveDrag(e);
-    }, { passive: false });
-    window.addEventListener('touchend', endDrag);
+      const dur = video.duration;
+      // حساسیت مناسب حرکت
+      let newTime = video.currentTime - (diffX * 0.02);
+      newTime = ((newTime % dur) + dur) % dur;
+
+      video.currentTime = newTime;
+      slider.value = (newTime / dur) * 100;
+    }, { passive: true });
+
+    stage.addEventListener('touchend', () => {
+      isTouching = false;
+    });
+
+    // پشتیبانی از درگ با ماوس (در حالت دسکتاپ)
+    let isMouseDown = false;
+    stage.addEventListener('mousedown', (e) => {
+      isMouseDown = true;
+      video.pause();
+      autoRotateBtn.textContent = "Auto Rotate: Off";
+      lastX = e.clientX;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isMouseDown || !video.duration) return;
+      const diffX = e.clientX - lastX;
+      lastX = e.clientX;
+
+      const dur = video.duration;
+      let newTime = video.currentTime - (diffX * 0.02);
+      newTime = ((newTime % dur) + dur) % dur;
+
+      video.currentTime = newTime;
+      slider.value = (newTime / dur) * 100;
+    });
+
+    window.addEventListener('mouseup', () => {
+      isMouseDown = false;
+    });
   </script>
 </body>
 </html>
