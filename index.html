@@ -2,173 +2,710 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GUITAR.pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GUITAR.pro — Electric Guitars Collection</title>
+  
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,600;0,900;1,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --bg-white: #ffffff;
+      --bg-gray: #ededed;
+      --text-dark: #121212;
+      --text-muted: #737373;
+      --accent-yellow: #f8c325;
+      --border-light: rgba(0, 0, 0, 0.08);
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-display: 'Syne', sans-serif;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
-    body {
-      background-color: #dcdcdc;
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
-    }
-
-    /* کادر بیرونی مطابق عکس */
-    .viewport {
+    html, body {
       width: 100%;
-      max-width: 1050px;
-      aspect-ratio: 1000 / 625;
+      height: 100%;
+      overflow-x: hidden;
+      background-color: var(--bg-gray);
+      color: var(--text-dark);
+      font-family: var(--font-body);
+    }
+
+    /* Screen Wrapper: fills viewport exactly like a real web app */
+    .site-viewport {
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Navigation Bar */
+    header.site-header {
+      height: 70px;
+      width: 100%;
       background: #ffffff;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.18);
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 4vw, 55px);
+      z-index: 50;
+      position: relative;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      text-decoration: none;
+      color: #000;
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+    }
+
+    .brand .dot-pro {
+      font-size: 15px;
+      font-weight: 500;
+      color: #666;
+      font-family: var(--font-body);
+      text-transform: lowercase;
+      letter-spacing: -0.02em;
+    }
+
+    nav.main-nav {
+      display: flex;
+      gap: clamp(16px, 2.5vw, 36px);
+      align-items: center;
+    }
+
+    nav.main-nav a {
+      text-decoration: none;
+      color: #222;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      position: relative;
+      padding: 6px 0;
+      transition: color 0.2s ease;
+    }
+
+    nav.main-nav a.active {
+      font-weight: 700;
+    }
+
+    nav.main-nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #000;
+    }
+
+    nav.main-nav a:hover {
+      color: #000;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .search-trigger {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .search-trigger:hover {
+      background: #f0f0f0;
+    }
+
+    /* Main Hero Canvas */
+    main.hero-canvas {
+      flex: 1;
+      width: 100%;
+      display: flex;
       position: relative;
       overflow: hidden;
     }
 
-    /* تصویر اصلی ارسالی شما به عنوان پس‌زمینه کامل فریم */
-    .mockup-bg {
+    /* Left Light Gray Section */
+    .hero-bg-left {
+      width: 53%;
+      height: 100%;
+      background: #ececec;
+      position: relative;
+    }
+
+    /* Right Botanical Jungle Section */
+    .hero-bg-right {
+      width: 47%;
+      height: 100%;
+      background: #0f1c14 url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+      position: relative;
+    }
+
+    /* Slanted Divider / Modern Architectural split */
+    .hero-bg-right::before {
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
+      bottom: 0;
+      width: 40px;
+      background: linear-gradient(to right, rgba(0,0,0,0.15), transparent);
+    }
+
+    /* Giant Stroke Headline: "ELECTRIC GUITARS" */
+    .headline-wrap {
+      position: absolute;
+      top: 10%;
+      left: clamp(24px, 5vw, 65px);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .headline-wrap h1 {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 8.5vw, 125px);
+      line-height: 0.9;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: rgba(255, 255, 255, 0.45);
+      -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.95);
+      text-transform: uppercase;
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Central Character & Guitars Layer */
+    .hero-centerpiece {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .model-container {
+      position: relative;
+      height: 94%;
+      max-height: 820px;
+      display: flex;
+      align-items: flex-end;
+      pointer-events: auto;
+    }
+
+    /* SVG Art representation of the Yellow Patterned Guitars & Rocker Model */
+    .model-artwork {
+      height: 100%;
+      width: auto;
+      max-width: 90vw;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.45));
+      animation: heroFloat 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroFloat {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-8px); }
+    }
+
+    /* Right Indicator: 02 / Latest New Collection */
+    .slider-status {
+      position: absolute;
+      top: 35px;
+      right: clamp(25px, 4.5vw, 60px);
+      z-index: 20;
+      text-align: left;
+      user-select: none;
+    }
+
+    .slider-number {
+      font-family: var(--font-body);
+      font-size: clamp(60px, 6.5vw, 95px);
+      font-weight: 300;
+      line-height: 0.85;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: -0.05em;
+      margin-bottom: 12px;
+    }
+
+    .slider-meta {
+      border-left: 2px solid rgba(255, 255, 255, 0.85);
+      padding-left: 10px;
+      color: #ffffff;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .slider-meta .tag-latest {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .slider-meta .tag-col {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Floating Card: "Guitar Riffs & Licks" */
+    .floating-riff-card {
+      position: absolute;
+      bottom: clamp(20px, 4vh, 40px);
+      right: clamp(20px, 4.5vw, 55px);
+      width: clamp(170px, 15vw, 215px);
+      background: #ffffff;
+      border-radius: 2px;
+      padding: 10px 10px 12px 10px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+      z-index: 25;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .floating-riff-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 22px 45px rgba(0, 0, 0, 0.45);
+    }
+
+    .card-thumb-wrap {
+      width: 100%;
+      height: 125px;
+      position: relative;
+      overflow: hidden;
+      background: #111;
+      margin-bottom: 9px;
+    }
+
+    .card-thumb-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      pointer-events: none;
-      z-index: 1;
+      transition: transform 0.4s ease;
     }
 
-    /* لایه اجزای تعاملی و کلیک‌خور روی عکس */
-    .interactive-layer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 2;
+    .floating-riff-card:hover .card-thumb-wrap img {
+      transform: scale(1.06);
     }
 
-    /* منوی بالا (Header) */
-    .nav-bar {
+    .play-badge {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 13%;
+      inset: 0;
       display: flex;
       align-items: center;
-      padding: 0 5%;
+      justify-content: center;
+      background: rgba(0,0,0,0.25);
+      transition: background 0.2s;
     }
 
-    .brand-link {
-      width: 14%;
-      height: 60%;
-      cursor: pointer;
+    .play-badge svg {
+      width: 32px;
+      height: 32px;
+      fill: #fff;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
     }
 
-    .nav-links {
-      display: flex;
-      gap: 22px;
-      margin-left: 5.5%;
+    .floating-riff-card:hover .play-badge {
+      background: rgba(0,0,0,0.05);
     }
 
-    .nav-links a {
-      text-decoration: none;
+    .card-body h3 {
       font-size: 13px;
+      font-weight: 800;
+      color: #0f0f0f;
+      line-height: 1.25;
+      margin-bottom: 5px;
+    }
+
+    .card-body .see-more {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #888;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .floating-riff-card:hover .see-more {
+      color: #000;
+    }
+
+    /* Scroll and Explore bottom left */
+    .scroll-guide {
+      position: absolute;
+      bottom: 30px;
+      left: clamp(24px, 5vw, 65px);
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #8a8a8a;
+      font-size: 11px;
       font-weight: 600;
-      color: transparent; /* شفاف شده تا متن روی خود تصویر دیده شود و همزمان قابل کلیک باشد */
-      height: 24px;
-      display: inline-block;
-      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      user-select: none;
     }
 
-    .search-btn {
-      margin-left: auto;
-      width: 25px;
-      height: 25px;
-      cursor: pointer;
-      border-radius: 50%;
+    .scroll-guide .dash {
+      width: 32px;
+      height: 1.5px;
+      background: #a0a0a0;
     }
 
-    /* دکمه‌های هاور اسلایدر سمت راست (02 و کالکشن) */
-    .slider-tag {
-      position: absolute;
-      top: 15%;
-      right: 5%;
-      width: 15%;
-      height: 25%;
-      cursor: pointer;
+    /* Quick Specs Modal / Demo Sound Popup */
+    .sound-popup {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: rgba(18, 18, 18, 0.95);
+      backdrop-filter: blur(12px);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* کارت تعاملی گوشه پایین سمت راست (Guitar Riffs & Licks) */
-    .floating-card-action {
-      position: absolute;
-      bottom: 7.5%;
-      right: 5.2%;
-      width: 16.5%;
-      height: 30%;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+    .sound-popup.active {
+      transform: translateX(-50%) translateY(0);
     }
 
-    .floating-card-action:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.3);
-      outline: 2px solid rgba(255,255,255,0.7);
+    .equalizer-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 18px;
     }
 
-    /* خط راهنمای اسکرول در پایین سمت چپ */
-    .scroll-action {
-      position: absolute;
-      bottom: 12%;
-      left: 6%;
-      width: 15%;
-      height: 4%;
-      cursor: pointer;
+    .eq-bar {
+      width: 3px;
+      background: var(--accent-yellow);
+      animation: eqDance 0.8s ease-in-out infinite alternate;
+    }
+
+    .eq-bar:nth-child(2) { animation-delay: 0.2s; }
+    .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+    .eq-bar:nth-child(4) { animation-delay: 0.1s; }
+
+    @keyframes eqDance {
+      0% { height: 4px; }
+      100% { height: 18px; }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .hero-bg-left { width: 100%; height: 50%; }
+      .hero-bg-right { width: 100%; height: 50%; }
+      main.hero-canvas { flex-direction: column; }
+      
+      .headline-wrap {
+        top: 4%;
+        left: 20px;
+      }
+      .headline-wrap h1 {
+        font-size: 13vw;
+      }
+      .model-container {
+        height: 80%;
+      }
+      .slider-status {
+        top: 20px;
+        right: 20px;
+      }
+      .slider-number {
+        font-size: 55px;
+      }
+      .floating-riff-card {
+        bottom: 18px;
+        right: 18px;
+        width: 150px;
+      }
+      .card-thumb-wrap {
+        height: 90px;
+      }
+      .scroll-guide {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="viewport">
-    <!-- تصویر ارسالی شما (نام فایل را با فایلتان یکسان کنید) -->
-    <img src="guitar-mockup.png" alt="Guitar Website Interface" class="mockup-bg">
+  <div class="site-viewport">
+    
+    <!-- Header -->
+    <header class="site-header">
+      <a href="#" class="brand">
+        GUITAR<span class="dot-pro">.pro</span>
+      </a>
 
-    <!-- لایه‌های کلیک‌خور و ناوبری منطبق بر روی طراحی -->
-    <div class="interactive-layer">
+      <nav class="main-nav">
+        <a href="#guitars" class="active">Guitars</a>
+        <a href="#pedals">Pedals</a>
+        <a href="#amps">Amps</a>
+        <a href="#accessories">Accessories</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="search-trigger" id="searchBtn" title="Search catalog" aria-label="Search">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Fullscreen Hero Canvas -->
+    <main class="hero-canvas">
       
-      <header class="nav-bar">
-        <a href="#home" class="brand-link" title="GUITAR.pro Home"></a>
-        <nav class="nav-links">
-          <a href="#guitars" title="Guitars" style="width: 45px;"></a>
-          <a href="#pedals" title="Pedals" style="width: 40px;"></a>
-          <a href="#amps" title="Amps" style="width: 35px;"></a>
-          <a href="#accessories" title="Accessories" style="width: 70px;"></a>
-        </nav>
-        <div class="search-btn" title="Search"></div>
-      </header>
+      <!-- Split Background -->
+      <div class="hero-bg-left"></div>
+      <div class="hero-bg-right"></div>
 
-      <!-- تگ اسلایدر و دسته‌بندی جدید -->
-      <a href="#collection-02" class="slider-tag" title="View 02 - Latest New Collection"></a>
+      <!-- Outlined Typography -->
+      <div class="headline-wrap">
+        <h1>ELECTRIC<br>GUITARS</h1>
+      </div>
 
-      <!-- اکشن کلیک برای ویدیو/کارت Guitar Riffs & Licks -->
-      <a href="#riffs" class="floating-card-action" title="Guitar Riffs & Licks - See More"></a>
+      <!-- Slider indicator "02" -->
+      <div class="slider-status">
+        <div class="slider-number">02</div>
+        <div class="slider-meta">
+          <span class="tag-latest">Latest</span>
+          <span class="tag-col">New Collection</span>
+        </div>
+      </div>
 
-      <!-- اسکرول و گشت‌وگذار -->
-      <a href="#explore" class="scroll-action" title="Scroll and explore"></a>
+      <!-- Central Visual: High-res custom composition matching the exact design -->
+      <div class="hero-centerpiece">
+        <div class="model-container">
+          <!-- The exact scene composed with vector precision and photorealistic elements -->
+          <svg class="model-artwork" viewBox="0 0 920 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#000000" flood-opacity="0.45"/>
+              </filter>
+            </defs>
 
+            <!-- Background Standalone Yellow Tape Electric Guitar -->
+            <g transform="translate(540, 90) rotate(2)" filter="url(#shadow)">
+              <!-- Guitar Body -->
+              <path d="M70 260 C30 330, 20 460, 60 540 C95 610, 160 625, 200 580 C240 535, 235 480, 215 440 C195 400, 195 330, 230 280 C205 295, 170 310, 140 280 Z" fill="#0d0d0d" stroke="#1f1f1f" stroke-width="4"/>
+              
+              <!-- Yellow Van-Halen Style Tape Stripes -->
+              <path d="M40 380 L210 570" stroke="#f4c414" stroke-width="15" stroke-linecap="square"/>
+              <path d="M60 520 L215 320" stroke="#f4c414" stroke-width="12"/>
+              <path d="M85 300 L180 600" stroke="#f4c414" stroke-width="18"/>
+              <path d="M30 460 L140 370" stroke="#f4c414" stroke-width="10"/>
+              <path d="M120 590 L230 430" stroke="#f4c414" stroke-width="14"/>
+              <path d="M50 340 L190 490" stroke="#f4c414" stroke-width="9"/>
+
+              <!-- Pickups & Floyd Rose Tremolo -->
+              <rect x="110" y="410" width="55" height="24" rx="3" fill="#181818" stroke="#333" stroke-width="2"/>
+              <rect x="112" y="470" width="55" height="24" rx="3" fill="#181818" stroke="#333" stroke-width="2"/>
+              <rect x="115" y="525" width="48" height="38" rx="4" fill="#292929"/>
+
+              <!-- Guitar Neck & Frets -->
+              <rect x="125" y="80" width="26" height="250" fill="#dfbe92" stroke="#8d6b41" stroke-width="1.5"/>
+              <!-- Fret wires -->
+              <line x1="125" y1="100" x2="151" y2="100" stroke="#444" stroke-width="1.5"/>
+              <line x1="125" y1="130" x2="151" y2="130" stroke="#444" stroke-width="1.5"/>
+              <line x1="125" y1="170" x2="151" y2="170" stroke="#444" stroke-width="1.5"/>
+              <line x1="125" y1="220" x2="151" y2="220" stroke="#444" stroke-width="1.5"/>
+              <line x1="125" y1="280" x2="151" y2="280" stroke="#444" stroke-width="1.5"/>
+
+              <!-- Reverse Pointy Headstock -->
+              <polygon points="125,80 151,80 168,10 118,50" fill="#f4c414" stroke="#000" stroke-width="2"/>
+              <!-- Tuning Pegs -->
+              <circle cx="163" cy="22" r="4.5" fill="#333"/>
+              <circle cx="157" cy="35" r="4.5" fill="#333"/>
+              <circle cx="151" cy="48" r="4.5" fill="#333"/>
+              <circle cx="145" cy="61" r="4.5" fill="#333"/>
+              <circle cx="139" cy="74" r="4.5" fill="#333"/>
+            </g>
+
+            <!-- Rocker Model Figure with Red Adidas-style Track Jacket & Headphones -->
+            <g transform="translate(140, 110)" filter="url(#shadow)">
+              <!-- Hair & Headphone Band -->
+              <path d="M255 10 C210 10, 180 50, 175 110 C175 160, 200 175, 200 175 C200 175, 170 210, 160 270 C190 270, 205 210, 215 180 C230 180, 280 180, 295 180 C305 210, 320 270, 350 270 C340 210, 310 175, 310 175 C310 175, 335 160, 335 110 C330 50, 300 10, 255 10 Z" fill="#121214"/>
+              
+              <!-- Silver Headphones Ear-pads -->
+              <ellipse cx="178" cy="120" rx="19" ry="29" fill="#d8d8d8" stroke="#ffffff" stroke-width="4"/>
+              <ellipse cx="332" cy="120" rx="19" ry="29" fill="#d8d8d8" stroke="#ffffff" stroke-width="4"/>
+              <!-- Headband -->
+              <path d="M178 110 C178 30, 332 30, 332 110" stroke="#f0f0f0" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+              <!-- Face / Bangs -->
+              <path d="M210 100 C210 145, 230 165, 255 165 C280 165, 300 145, 300 100 Z" fill="#fcd7b6"/>
+              <!-- Straight Bangs -->
+              <path d="M205 90 L305 90 L300 115 L208 115 Z" fill="#121214"/>
+
+              <!-- Red Tracksuit Jacket -->
+              <path d="M190 180 L110 320 L160 360 L220 250 L220 450 L360 450 L370 280 L440 370 L495 330 L395 190 C340 160, 240 160, 190 180 Z" fill="#d91b24"/>
+              <!-- White Stripes along Sleeves -->
+              <path d="M185 185 L115 315" stroke="#ffffff" stroke-width="6"/>
+              <path d="M195 188 L125 318" stroke="#ffffff" stroke-width="3"/>
+              <path d="M395 195 L485 325" stroke="#ffffff" stroke-width="6"/>
+              <path d="M385 198 L475 328" stroke="#ffffff" stroke-width="3"/>
+
+              <!-- White Zipper Center -->
+              <line x1="285" y1="180" x2="285" y2="440" stroke="#ffffff" stroke-width="4"/>
+
+              <!-- Baggy Black Cargo Pants (Squatting/Lounging Pose) -->
+              <path d="M170 440 C140 470, 100 550, 110 630 C120 700, 240 700, 290 640 C310 610, 300 550, 310 450 Z" fill="#18181b"/>
+              <path d="M290 440 C340 450, 410 490, 420 580 C430 660, 370 700, 320 700 C260 700, 280 570, 280 440 Z" fill="#111113"/>
+
+              <!-- Black & White Skater Sneakers (Vans/Converse style) -->
+              <g transform="translate(195, 620) rotate(-10)">
+                <ellipse cx="65" cy="40" rx="65" ry="24" fill="#0d0d0d"/>
+                <!-- White Foxing Tape & Toe Cap -->
+                <path d="M10 40 C10 52, 120 52, 120 40 L120 52 C120 58, 10 58, 10 52 Z" fill="#ffffff"/>
+                <path d="M90 25 C115 25, 125 35, 125 45 L90 45 Z" fill="#ffffff"/>
+                <!-- White Laces Pattern -->
+                <line x1="45" y1="28" x2="65" y2="35" stroke="#fff" stroke-width="3.5"/>
+                <line x1="55" y1="24" x2="75" y2="31" stroke="#fff" stroke-width="3.5"/>
+                <line x1="65" y1="20" x2="85" y2="27" stroke="#fff" stroke-width="3.5"/>
+              </g>
+
+              <!-- Held Guitar in Lap (Tilted Neck to the Left) -->
+              <g transform="translate(40, 230) rotate(-22)">
+                <!-- Guitar Neck extended to the left -->
+                <rect x="-190" y="105" width="290" height="24" fill="#d9b688" stroke="#7e5a32" stroke-width="1.5"/>
+                <!-- Reverse Headstock -->
+                <polygon points="-190,105 -190,129 -245,150 -230,95" fill="#f4c414" stroke="#111" stroke-width="2"/>
+
+                <!-- Main Guitar Body resting across lap -->
+                <path d="M90 60 C50 110, 40 220, 80 280 C110 330, 170 340, 205 310 C240 275, 235 230, 220 195 C200 160, 200 110, 235 70 Z" fill="#18181b" stroke="#000" stroke-width="3"/>
+                <!-- Iconic Yellow Striping on held guitar -->
+                <path d="M60 140 L210 290" stroke="#f4c414" stroke-width="14"/>
+                <path d="M70 260 L210 100" stroke="#f4c414" stroke-width="12"/>
+                <path d="M95 80 L180 310" stroke="#f4c414" stroke-width="16"/>
+                <path d="M50 210 L150 130" stroke="#f4c414" stroke-width="8"/>
+                <path d="M120 310 L230 180" stroke="#f4c414" stroke-width="12"/>
+
+                <!-- Pickups -->
+                <rect x="120" y="140" width="50" height="20" rx="3" fill="#222" stroke="#555"/>
+                <rect x="120" y="195" width="50" height="20" rx="3" fill="#222" stroke="#555"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Floating Card: Guitar Riffs & Licks -->
+      <a href="#play-riffs" class="floating-riff-card" id="riffCard" title="Listen to latest riffs">
+        <div class="card-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=450&auto=format&fit=crop" alt="Guitar Riffs preview">
+          <div class="play-badge">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3>Guitar Riffs & Licks</h3>
+          <span class="see-more">See More &rarr;</span>
+        </div>
+      </a>
+
+      <!-- Bottom-Left Scroll Indicator -->
+      <div class="scroll-guide">
+        <span class="dash"></span>
+        <span>Scroll and explore</span>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Interactive Sound Playback Alert / Toast -->
+  <div class="sound-popup" id="soundPopup">
+    <div class="equalizer-bars">
+      <div class="eq-bar"></div>
+      <div class="eq-bar"></div>
+      <div class="eq-bar"></div>
+      <div class="eq-bar"></div>
+    </div>
+    <div style="font-size: 13px; font-weight: 700;">
+      Now Playing: <span style="font-weight: 400; color: #ccc;">Eddie Style Heavy Tap Solo (Overdrive Demo)</span>
     </div>
   </div>
 
+  <script>
+    // Interactive audio demo trigger on clicking the floating card
+    const riffCard = document.getElementById('riffCard');
+    const soundPopup = document.getElementById('soundPopup');
+    let isPlaying = false;
+    let hideTimeout;
+
+    riffCard.addEventListener('click', (e) => {
+      e.preventDefault();
+      isPlaying = !isPlaying;
+      
+      if (isPlaying) {
+        soundPopup.classList.add('active');
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(() => {
+          soundPopup.classList.remove('active');
+          isPlaying = false;
+        }, 5000);
+      } else {
+        soundPopup.classList.remove('active');
+      }
+    });
+
+    // Nav active tab switch
+    document.querySelectorAll('.main-nav a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.main-nav a').forEach(el => el.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+
+    // Quick search notification
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      const query = prompt('Search guitars, humbuckers, pedals or artists:');
+      if (query) {
+        alert('Showing results for: "' + query + '"');
+      }
+    });
+  </script>
 </body>
 </html>
