@@ -242,11 +242,12 @@
       overflow: hidden;
     }
 
-    /* کاور ساز که مانع از سیاه شدن کادر می‌شود */
+    /* عکس گیتار سفید شما */
     .card-cover img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center;
       transition: transform 0.25s ease;
     }
 
@@ -487,12 +488,12 @@
         <button class="pill">Acoustic</button>
       </div>
 
-      <!-- کارت محصول با کاور مطمئن -->
+      <!-- کارت محصول با تصویر گیتار سفید شما -->
       <div class="cards-grid">
         <div class="guitar-card" onclick="open360Viewer()">
           <div class="card-cover">
-            <!-- تصویر کاور واقعی که کارت هرگز سیاه نماند -->
-            <img src="https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=600" alt="Ibanez White" />
+            <!-- تصویر گیتار سفید شما -->
+            <img src="./guitar-white.png" alt="Ibanez White" />
             <span class="badge-360">360° Studio</span>
           </div>
           <div class="card-meta">
@@ -525,7 +526,7 @@
     </div>
 
     <!-- ========================================================
-         MODAL: نمایش ۳۶۰ درجه
+         MODAL: نمایش ۳۶۰ درجه با ویدیوی اختصاصی شما
     ======================================================== -->
     <div class="viewer-360-modal" id="viewer360Modal">
       <div class="viewer-header">
@@ -537,7 +538,7 @@
       </div>
 
       <div class="viewer-stage" id="viewerStage">
-        <!-- ویدیوی ۳۶۰ درجه با لود مستقیم در گیت‌هاب -->
+        <!-- ویدیوی گیتار سفید شما -->
         <video id="mainStudioVideo" src="./guitar-360.mp4" playsinline loop muted preload="auto"></video>
       </div>
 
@@ -586,7 +587,7 @@
       }
     }
 
-    // چرخش تعاملی با کشیدن انگشت
+    // چرخش ساز با کشیدن دست روی صفحه
     function startDrag(e) {
       isDragging = true;
       if (!video.paused) {
